@@ -13,7 +13,7 @@ export const APP_CONFIG = {
     DATABASE: process.env.DATABASE,
     MIGRATIONS_TABLE_NAME: 'migration',
     ENTITIES: [__dirname + '/../modules/**/*.entity.{js,ts}'],
-    SYNCHRONIZE: process.env.TYPEORM_SYNC === 'true',
+    SYNCHRONIZE: process.env.SYNCHRONIZE === 'true',
     DEBUG: process.env.TYPEORM_DEBUG === 'true',
   },
 };

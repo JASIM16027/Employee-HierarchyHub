@@ -88,7 +88,7 @@ describe('EmployeeController', () => {
 
       const result = await controller.getEmployeeHierarchy(1);
    
-      // Ensure that only the child data is returned
+      // Ensure that only the child data is returned for specific employee id
       expect(result).toEqual(expectedChildren);
       expect(mockEmployeeService.getEmployeeHierarchyByPosition).toHaveBeenCalledWith(1);
     });

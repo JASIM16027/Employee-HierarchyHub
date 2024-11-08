@@ -7,6 +7,7 @@ import { EmployeeEntity } from './employees/employee.entity';
 import * as dotenv from 'dotenv';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
+import { AppCacheModule } from './appCacheModule/appCache.module';
 dotenv.config();
 
 @Module({
@@ -39,6 +40,7 @@ dotenv.config();
     }),
 
     EmployeeModule,
+    AppCacheModule
   ],
   controllers: [AppController],
   providers: [AppService],

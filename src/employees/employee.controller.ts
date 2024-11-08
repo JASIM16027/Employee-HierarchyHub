@@ -15,7 +15,7 @@ import { EmployeeEntity } from './employee.entity';
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) { }
 
-  @Post('resetData')
+  @Post('insertData')
   async addBulkEmployeeData() {
     try {
       const sampleEmployeeData: any[] = [
@@ -26,7 +26,7 @@ export class EmployeeController {
       ];
       await this.employeeService.resetAllData();
       const newEmployees = await this.employeeService.addBulkEmployees(sampleEmployeeData);
-    
+
       return {
         message: 'Employees data inserted successfully',
         employees: newEmployees,
@@ -51,11 +51,7 @@ export class EmployeeController {
     }
 
     employeeHierarchy = Array.isArray(employeeHierarchy) ? employeeHierarchy : [employeeHierarchy];
-    return this.getChildrenData(employeeHierarchy);
+    return employeeHierarchy.flatMap((employee: any) => employee.child || [])
   }
 
-  private getChildrenData(employeeHierarchy: any[]): any[] {
-
-    return employeeHierarchy.flatMap((employee) => employee.child || []);
-  }
 }

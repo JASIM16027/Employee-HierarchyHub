@@ -49,7 +49,7 @@ export class EmployeeController {
 
     if (!employeeHierarchy || employeeHierarchy.length === 0) {
       throw new HttpException(
-        'No employees hierarchy found for this position',
+        'No employees hierarchy found for this employee id',
         HttpStatus.NOT_FOUND,
       );
     }

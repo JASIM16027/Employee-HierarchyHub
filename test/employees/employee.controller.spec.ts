@@ -1,6 +1,7 @@
+
 import { Test, TestingModule } from '@nestjs/testing';
-import { EmployeeController } from './employee.controller';
-import { EmployeeService } from './employee.service';
+import { EmployeeController } from '../../src/employees/employee.controller';
+import { EmployeeService } from '../../src/employees/employee.service';
 
 describe('EmployeeController', () => {
   let controller: EmployeeController;
@@ -27,7 +28,7 @@ describe('EmployeeController', () => {
   });
 
   describe('getEmployeeHierarchy', () => {
-    it('should return employee hierarchy data for a given position', async () => {
+    it('should return employee hierarchy data for a given employee id ', async () => {
       const mockHierarchy = [
         {
           "id": 1,
@@ -96,11 +97,11 @@ describe('EmployeeController', () => {
     it('should throw an error if no hierarchy is found', async () => {
       mockEmployeeService.getEmployeeHierarchyByPosition.mockResolvedValue(null);
 
-      await expect(controller.getEmployeeHierarchy(99)).rejects.toThrowError('No employees hierarchy found for this position');
+      await expect(controller.getEmployeeHierarchy(99)).rejects.toThrowError('No employees hierarchy found for this employee id');
       expect(mockEmployeeService.getEmployeeHierarchyByPosition).toHaveBeenCalledWith(99);
     });
 
-    it('should return an empty array if no children exist for the given position', async () => {
+    it('should return an empty array if no children exist for the given employee id', async () => {
       const mockSingleEmployee = {
         id: 4,
         name: "Rakib",

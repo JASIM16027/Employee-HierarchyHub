@@ -15,14 +15,14 @@ export class EmployeeService {
     private readonly cacheService: AppCacheService,
     private readonly redisCacheService: RedisCacheService,
     private readonly logger: CentralLogger,
-  ) {}
+  ) { }
 
   /**
    * Fetches employee hierarchy by position using id.
    * It first checks the cache, then queries the database if not found in the cache.
    */
   async getEmployeeHierarchyByPosition(id: number): Promise<any> {
-     // const cachedData = await this.cacheService.get(id.toString());
+    // const cachedData = await this.cacheService.get(id.toString());
     // Check if data is already in the cache
     const cachedData = await this.redisCacheService.get(id.toString());
 
@@ -42,7 +42,7 @@ export class EmployeeService {
       return null;
     }
 
-  //await this.cacheService.set(id.toString(), employee);  // default ttl->3600
+    //await this.cacheService.set(id.toString(), employee);  // default ttl->3600
     // Cache the result to optimize future queries
     await this.redisCacheService.set(id.toString(), JSON.stringify(employee));
     this.logger.info(`Cache set for employee ID ${id}`);
@@ -81,4 +81,19 @@ export class EmployeeService {
       }),
     );
   }
+
+  async addBulkEmployees(employeeData: EmployeeEntity[]): Promise<EmployeeEntity[]> {
+    // Reset the cache and database before adding new data
+
+    await this.redisCacheService.flushAllCache();
+    this.logger.info(`Redis cache data has been deleted!`);
+
+    const employees = this.employeeRepository.create(employeeData); 
+    return this.employeeRepository.save(employees);
+  }
+
+  async resetAllData(): Promise<void> {
+    await this.employeeRepository.clear();
+  }
+
 }

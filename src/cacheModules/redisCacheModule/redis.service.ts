@@ -24,4 +24,12 @@ export class RedisCacheService {
         }
     }
 
+    async flushAllCache(): Promise<void> {
+        try {
+          await this.redis.flushall();  // Removes all keys from all databases
+        } catch (error) {
+          throw error;
+        }
+      }
+
 }

@@ -20,6 +20,9 @@ export class EmployeeEntity {
   @Column()
   positionName: string;
 
+  @Column({ nullable: true })
+  parentId: number | null;
+
   @ManyToOne(() => EmployeeEntity, (employee) => employee.child, {
     nullable: true,
   })

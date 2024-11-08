@@ -1,10 +1,11 @@
 
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EmployeeEntity } from './employee.entity';
 import { Repository } from 'typeorm';
+import { EmployeeEntity } from './employee.entity';
 import { AppCacheService } from '../cacheModules/appCacheModule/appCache.service';
-import { RedisCacheService } from 'src/cacheModules/redisCacheModule/redis.service';
+import { RedisCacheService } from '../cacheModules/redisCacheModule/redis.service';
+import { CentralLogger } from '../loggerServices/centralLogger.service';
 
 @Injectable()
 export class EmployeeService {
@@ -12,33 +13,48 @@ export class EmployeeService {
     @InjectRepository(EmployeeEntity)
     private employeeRepository: Repository<EmployeeEntity>,
     private readonly cacheService: AppCacheService,
-    private readonly redisCacheService: RedisCacheService
-  ) { }
+    private readonly redisCacheService: RedisCacheService,
+    private readonly logger: CentralLogger,
+  ) {}
 
-  // Recursive function to fetch employee hierarchy by employee id
-
+  /**
+   * Fetches employee hierarchy by position using id.
+   * It first checks the cache, then queries the database if not found in the cache.
+   */
   async getEmployeeHierarchyByPosition(id: number): Promise<any> {
-    let employee: EmployeeEntity;
-   // const cachedData = await this.cacheService.get(id.toString());
+     // const cachedData = await this.cacheService.get(id.toString());
+    // Check if data is already in the cache
     const cachedData = await this.redisCacheService.get(id.toString());
+
     if (cachedData) {
-      console.log("Found employee hierarchy", cachedData)
-      employee = JSON.parse(cachedData);
-    } else {
-      employee = await this.employeeRepository.findOne({
-        where: { id },
-        relations: ['child'],
-      });
+      this.logger.info(`Cache hit for employee ID ${id}`);
+      return this.formatEmployeeData(JSON.parse(cachedData));
     }
 
+    // If data is not in the cache, fetch it from the database
+    const employee = await this.employeeRepository.findOne({
+      where: { id },
+      relations: ['child'],
+    });
 
-    if (!employee) return null;
-    // Cache the fetched data to improve performance and reduce database queries
+    if (!employee) {
+      this.logger.warn(`Employee with ID ${id} not found`);
+      return null;
+    }
 
-    //await this.cacheService.set(id.toString(), employee);  // default ttl->3600
-
+  //await this.cacheService.set(id.toString(), employee);  // default ttl->3600
+    // Cache the result to optimize future queries
     await this.redisCacheService.set(id.toString(), JSON.stringify(employee));
+    this.logger.info(`Cache set for employee ID ${id}`);
 
+    return this.formatEmployeeData(employee);
+  }
+
+  /**
+   * Formats the employee data with hierarchy information.
+   * @param employee - The employee entity
+   */
+  private async formatEmployeeData(employee: EmployeeEntity): Promise<any> {
     // Structure the result to include employee and child hierarchy
     const result = {
       id: employee.id,
@@ -51,14 +67,17 @@ export class EmployeeService {
     return result;
   }
 
-  // Function to handle the recursive fetching of child
+  /**
+   * Recursively fetches the children of a given employee.
+   * @param children - List of child employee entities
+   */
   private async getChildren(children: EmployeeEntity[]): Promise<any[]> {
-    if (!children || children.length === 0) return null;
+    if (!children || children.length === 0) return [];
 
-    // Use Promise.all to process the child employees recursively
+    // Recursively fetch children data
     return Promise.all(
       children.map(async (child) => {
-        return await this.getEmployeeHierarchyByPosition(child.id);
+        return this.getEmployeeHierarchyByPosition(child.id);
       }),
     );
   }

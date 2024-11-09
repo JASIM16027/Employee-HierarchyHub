@@ -11,7 +11,7 @@ RUN npm install && npm run build
 FROM node:18-alpine
 
 
-ENV NODE_ENV production
+#ENV NODE_ENV production
 WORKDIR /home/node/app
 
 COPY --from=builder /home/node/app/package*.json ./

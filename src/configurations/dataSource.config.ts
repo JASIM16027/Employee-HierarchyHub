@@ -10,7 +10,8 @@ export const dataSourceOptions: DataSourceOptions = {
   password: appConfig.DB_PASSWORD,
   database: appConfig.DB_NAME,
   entities: [EmployeeEntity],
-  migrationsTableName: appConfig.MIGRATIONS_TABLE_NAME,
+  migrations: ['dist/migrations/*.js'],
+  //migrationsTableName: appConfig.MIGRATIONS_TABLE_NAME,
   synchronize: appConfig.SYNCHRONIZE,
   logging: appConfig.DEBUG,
   extra: {
@@ -21,4 +22,19 @@ export const dataSourceOptions: DataSourceOptions = {
 
 
 export const AppDataSource = new DataSource(dataSourceOptions);
+
+export async function runMigrations() {
+  if (appConfig.AUTO_RUN_MIGRATIONS) {
+    try {
+      await AppDataSource.initialize();
+      console.log('Running migrations...');
+      await AppDataSource.runMigrations();
+      console.log('Migrations completed.');
+    } catch (error) {
+      console.error('Error running migrations:', error);
+    } finally {
+      await AppDataSource.destroy();
+    }
+  }
+}
 

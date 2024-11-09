@@ -83,17 +83,13 @@ export class EmployeeService {
   }
 
   async addBulkEmployees(employeeData: EmployeeEntity[]): Promise<EmployeeEntity[]> {
-    // Reset the cache and database before adding new data
-
-    await this.redisCacheService.flushAllCache();
-    this.logger.info(`Redis cache data has been deleted!`);
-
     const employees = this.employeeRepository.create(employeeData); 
     return this.employeeRepository.save(employees);
   }
 
   async resetAllData(): Promise<void> {
-    await this.employeeRepository.clear();
+    await this.redisCacheService.flushAllCache();
+    this.logger.info(`Redis cache data has been deleted!`);
   }
 
 }

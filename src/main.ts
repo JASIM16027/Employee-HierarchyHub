@@ -6,9 +6,14 @@ import {
 } from '@nestjs/platform-express';
 
 import * as dotenv from 'dotenv';
+import { AppDataSource, runMigrations } from './configurations/dataSource.config';
+import { appConfig } from './configurations/app.config';
 dotenv.config();
 
 async function bootstrap() {
+  if (appConfig.AUTO_RUN_MIGRATIONS) {
+    await runMigrations();
+  }
   const app = await NestFactory.create<NestExpressApplication>(
     AppModule,
     new ExpressAdapter(),

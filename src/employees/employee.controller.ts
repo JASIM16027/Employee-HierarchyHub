@@ -14,28 +14,18 @@ import { EmployeeEntity } from './employee.entity';
 @Controller('employees')
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) { }
-//CREATE INDEX idx_employees_parent_id ON employees(parentId);
-  @Post('insertData')
-  async addBulkEmployeeData() {
+  @Post('resetRedisCache')
+  async clearRedisCache() {
     try {
-      const sampleEmployeeData: any[] = [
-        { id: 1, name: 'Rafi', positionId: 1, positionName: 'CTO', parentId: null },
-        { id: 2, name: 'Md. Jasim Uddin', positionId: 2, positionName: 'Senior Software Engineer', parentId: 1 },
-        { id: 3, name: 'Rakib', positionId: 3, positionName: 'Software Engineer', parentId: 2 },
-        { id: 4, name: 'Tamim', positionId: 4, positionName: 'Junior Software Engineer', parentId: 3 },
-      ];
       await this.employeeService.resetAllData();
-      const newEmployees = await this.employeeService.addBulkEmployees(sampleEmployeeData);
-
-      return {
-        message: 'Employees data inserted successfully',
-        employees: newEmployees,
-      };
+      return { message: 'Redis cache cleared successfully' };
+      
     } catch (error) {
       throw new HttpException(
-        'Error inserting employees data',
+        'Error clearing Redis cache',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+      
     }
   }
 

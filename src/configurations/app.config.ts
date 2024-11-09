@@ -10,7 +10,8 @@ export const AppConfigSchema = Joi.object({
   DB_USERNAME: Joi.string().required(),
   DB_PASSWORD: Joi.string().required(),
   DATABASE: Joi.string().required(),
-  MIGRATIONS_TABLE_NAME: Joi.string().default('migration'),
+  AUTO_RUN_MIGRATIONS: Joi.boolean().default(true),
+  //MIGRATIONS_TABLE_NAME: Joi.string().default('migration'),
   SYNCHRONIZE: Joi.boolean().default(false),
   DEBUG: Joi.boolean().default(false),
 });
@@ -23,7 +24,8 @@ export const appConfig = {
   DB_USERNAME: process.env.DB_USERNAME,
   DB_PASSWORD: process.env.DB_PASSWORD,
   DB_NAME: process.env.DATABASE,
-  MIGRATIONS_TABLE_NAME: 'migration',
+  AUTO_RUN_MIGRATIONS: process.env.AUTO_RUN_MIGRATIONS === 'true',
+ // MIGRATIONS_TABLE_NAME: 'migration',
   SYNCHRONIZE: false,
   DEBUG: process.env.DEBUG === 'true',
 };

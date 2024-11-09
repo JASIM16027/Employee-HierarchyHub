@@ -14,7 +14,7 @@ import { EmployeeEntity } from './employee.entity';
 @Controller('employees')
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) { }
-
+//CREATE INDEX idx_employees_parent_id ON employees(parentId);
   @Post('insertData')
   async addBulkEmployeeData() {
     try {

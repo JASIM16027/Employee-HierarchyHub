@@ -1,0 +1,13 @@
+config:
+  target: 'http://localhost:4000'
+  phases:
+    - duration: 60
+      arrivalRate: 1000
+      name: 'Warm-up phase'
+    - duration: 300
+      arrivalRate: 5000
+      name: 'Steady load phase'
+scenarios:
+  - flow:
+      - get:
+          url: '/employees/hierarchy/1'

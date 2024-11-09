@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { RedisCacheModule } from './cacheModules/redisCacheModule/redis.module';
 import { appConfig, AppConfigSchema } from './configurations/app.config';
 import { dataSourceOptions } from './configurations/dataSource.config';
+import { UserModule } from './users/users.module';
 
 
 @Module({
@@ -22,6 +23,7 @@ import { dataSourceOptions } from './configurations/dataSource.config';
     }),
   
     EmployeeModule,
+    UserModule,
     // AppCacheModule,
     RedisCacheModule
   ],

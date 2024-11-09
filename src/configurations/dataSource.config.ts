@@ -1,3 +1,4 @@
+import { User } from "src/users/entities/user.entity";
 import { EmployeeEntity } from "../employees/employee.entity";
 import { appConfig } from "./app.config";
 import { DataSource, DataSourceOptions } from "typeorm";
@@ -9,9 +10,9 @@ export const dataSourceOptions: DataSourceOptions = {
   username: appConfig.DB_USERNAME,
   password: appConfig.DB_PASSWORD,
   database: appConfig.DB_NAME,
-  entities: [EmployeeEntity],
+  entities: [EmployeeEntity, User],
   migrations: ['dist/migrations/*.js'],
-  //migrationsTableName: appConfig.MIGRATIONS_TABLE_NAME,
+  migrationsTableName: appConfig.MIGRATIONS_TABLE_NAME,
   synchronize: appConfig.SYNCHRONIZE,
   logging: appConfig.DEBUG,
   extra: {
